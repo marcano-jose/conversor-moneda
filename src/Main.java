@@ -1,35 +1,49 @@
+import com.google.gson.Gson;
+
+import java.util.Date;
+
 public class Main {
     public static void main(String[] args) {
         String apiKey = System.getenv("MI_API_KEY");
+
         if (apiKey == null || apiKey.trim().isEmpty()) {
-            throw new IllegalStateException("La variable de entorno MI_API_KEY no está configurada o está vacía. " +
+            throw new IllegalStateException("Variable de entorno, MI_API_KEY, sin configurar o vacía. \n" +
                     "La aplicación no puede continuar.");
         }
-        System.out.println("API Key obtenida del entorno.");
+        System.out.println("API Key obtenida del entorno del Sistema Operativo.");
 
         String baseCurrency = "USD";
-        String targetCurrency = "VES";
 
         ExchangeRateClient client = new ExchangeRateClient(apiKey);
 
         try {
-            String exchangeRateData = client.getExchangeRate(baseCurrency);
-            //String exchangeRateData = client.getExchangeRate(baseCurrency, targetCurrency);
-            System.out.println(exchangeRateData);
-            // Procesar los datos de la tasa de cambio
+            String exchangeRateDataJson = client.getExchangeRate(baseCurrency);
+
+            Gson gson = new Gson();
+            ExchangeRateResponse response = gson.fromJson(exchangeRateDataJson, ExchangeRateResponse.class);
+
+            // Ejemplo:
+            Date fecha = new Date(response.getTime_last_update_unix() * 1000); // Se multiplica por 1000 porque Date espera milisegundos
+
+            System.out.println("Ultima actualización: " + fecha);
+            System.out.println("Base Dólar estadounidense: " + response.getBase_code());
+            System.out.println("Tasas:");
+            System.out.println("- Peso argentino: " + response.getConversion_rates().get("ARS"));
+            System.out.println("- Boliviano boliviano: " + response.getConversion_rates().get("BOB"));
+            System.out.println("- Real brasileño: " + response.getConversion_rates().get("BRL"));
+            System.out.println("- Peso chileno: " + response.getConversion_rates().get("CLP"));
+            System.out.println("- Peso colombiano: " + response.getConversion_rates().get("VES"));
+
         } catch (ExchangeRateClientException e) {
             System.err.println(e.getMessage());
-            // Aquí puedes implementar lógica específica para los errores del servicio
-            // Podrías registrar el error con más detalle (e.getCause()),
-            // mostrar un mensaje de error amigable al usuario,
-            // intentar una acción de recuperación, etc.
+
             if (e.getCause() != null) {
                 System.err.println(e.getCause().getMessage());
             }
+
         } catch (InterruptedException e) {
             System.err.println(e.getMessage());
             Thread.currentThread().interrupt();
-            // Manejar la interrupción adecuadamente (por ejemplo, limpiar recursos, salir)
         }
     }
 }
