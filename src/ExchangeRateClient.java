@@ -1,5 +1,7 @@
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -22,9 +24,18 @@ public class ExchangeRateClient {
         this.apiKey = apiKey;
     }
 
-    public String standardExchangeRate(String baseCurrency) {
+    public String getExchangeRate(String baseCurrency) throws ExchangeRateClientException, InterruptedException {
         String urlRequest = API_URL_BASE + apiKey + "/latest/" + baseCurrency;
+        return processExchangeRateResponse(urlRequest, baseCurrency);
+    }
 
+    public String getExchangeRate(String baseCurrency, String targetCurrency) throws ExchangeRateClientException, InterruptedException {
+        String urlRequest = API_URL_BASE + apiKey + "/pair/" + baseCurrency + "/" + targetCurrency;
+        String description = "el par " + baseCurrency + "-" + targetCurrency;
+        return processExchangeRateResponse(urlRequest, description);
+    }
+
+    private String processExchangeRateResponse(String urlRequest, String description) throws ExchangeRateClientException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(urlRequest))
                 .GET()
@@ -37,18 +48,17 @@ public class ExchangeRateClient {
             if (response.statusCode() == 200) {
                 return response.body();
             } else {
-                handleApiError(response);
+                throw handleApiError(response);
             }
         } catch (IOException e) {
-            System.err.println("Error de IO al obtener la tasa de cambio para " + baseCurrency + ": " + e.getMessage());
+            throw new ExchangeRateClientException("Error de IO al obtener la tasa de cambio para " + description, e);
         } catch (InterruptedException e) {
-            System.err.println("Operación interrumpida al obtener la tasa de cambio para " + baseCurrency + ": " + e.getMessage());
             Thread.currentThread().interrupt();
+            throw new InterruptedException("Operación interrumpida al obtener la tasa de cambio para " + description);
         }
-        return null;
     }
 
-    private void handleApiError(HttpResponse<String> response) {
+    private ExchangeRateClientException handleApiError(HttpResponse<String> response) throws ExchangeRateClientException {
         String errorBody = response.body();
         String errorMessage = "Error al obtener la tasa de cambio. Código de estado: " + response.statusCode();
 
@@ -66,9 +76,11 @@ public class ExchangeRateClient {
                 default -> ". Error desconocido."; // Error no cubierto por la API
             };
 
-        } catch (Exception e) {
+        } catch (JsonParseException e) {
             errorMessage += ". Error al analizar la respuesta del error: " + errorBody;
+        } catch (Exception e) {
+            errorMessage += ". Error inesperado al procesar la respuesta del error: " + errorBody;
         }
-        System.out.println(errorMessage);
+        throw new ExchangeRateClientException(errorMessage);
     }
 }

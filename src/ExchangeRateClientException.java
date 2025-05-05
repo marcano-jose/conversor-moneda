@@ -1,9 +1,9 @@
-public class ExchangeRateServiceException extends Exception {
-    public ExchangeRateServiceException(String message) {
+public class ExchangeRateClientException extends Exception {
+    public ExchangeRateClientException(String message) {
         super(message);
     }
 
-    public ExchangeRateServiceException(String message, Throwable cause) {
+    public ExchangeRateClientException(String message, Throwable cause) {
         super(message, cause);
     }
 }
