@@ -1,3 +1,5 @@
+package com.aluracursos.conversormoneda.models;
+
 import java.util.Map;
 
 public class ExchangeRateResponse {

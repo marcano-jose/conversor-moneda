@@ -1,3 +1,5 @@
+package com.aluracursos.conversormoneda.services;
+
 public class ExchangeRateClientException extends Exception {
     public ExchangeRateClientException(String message) {
         super(message);

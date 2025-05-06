@@ -1,3 +1,6 @@
+import com.aluracursos.conversormoneda.models.ExchangeRateResponse;
+import com.aluracursos.conversormoneda.services.ExchangeRateClient;
+import com.aluracursos.conversormoneda.services.ExchangeRateClientException;
 import com.google.gson.Gson;
 
 import java.util.Date;
@@ -32,7 +35,7 @@ public class Main {
             System.out.println("- Boliviano boliviano: " + response.getConversion_rates().get("BOB"));
             System.out.println("- Real brasileño: " + response.getConversion_rates().get("BRL"));
             System.out.println("- Peso chileno: " + response.getConversion_rates().get("CLP"));
-            System.out.println("- Peso colombiano: " + response.getConversion_rates().get("VES"));
+            System.out.println("- Peso colombiano: " + response.getConversion_rates().get("COP"));
 
         } catch (ExchangeRateClientException e) {
             System.err.println(e.getMessage());
