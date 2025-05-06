@@ -11,7 +11,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
-public class ExchangeRateClient {
+public class ApiClient {
 
     private static final String API_URL_BASE = "https://v6.exchangerate-api.com/v6/";
     private static final int CONNECT_TIMEOUT_SECONDS = 20;
@@ -19,25 +19,25 @@ public class ExchangeRateClient {
     private final HttpClient httpClient;
     private final String apiKey;
 
-    public ExchangeRateClient(String apiKey) {
+    public ApiClient(String apiKey) {
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(CONNECT_TIMEOUT_SECONDS))
                 .build();
         this.apiKey = apiKey;
     }
 
-    public String getExchangeRate(String baseCurrency) throws ExchangeRateClientException, InterruptedException {
+    public String lookupInfo(String baseCurrency) throws ApiClientException, InterruptedException {
         String urlRequest = API_URL_BASE + apiKey + "/latest/" + baseCurrency;
-        return processExchangeRateResponse(urlRequest, baseCurrency);
+        return queryInfo(urlRequest, baseCurrency);
     }
 
-    public String getExchangeRate(String baseCurrency, String targetCurrency) throws ExchangeRateClientException, InterruptedException {
+    public String lookupInfo(String baseCurrency, String targetCurrency) throws ApiClientException, InterruptedException {
         String urlRequest = API_URL_BASE + apiKey + "/pair/" + baseCurrency + "/" + targetCurrency;
         String description = "el par " + baseCurrency + "-" + targetCurrency;
-        return processExchangeRateResponse(urlRequest, description);
+        return queryInfo(urlRequest, description);
     }
 
-    private String processExchangeRateResponse(String urlRequest, String description) throws ExchangeRateClientException, InterruptedException {
+    private String queryInfo(String urlRequest, String description) throws ApiClientException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(urlRequest))
                 .GET()
@@ -50,19 +50,19 @@ public class ExchangeRateClient {
             if (response.statusCode() == 200) {
                 return response.body();
             } else {
-                throw handleApiError(response);
+                throw handlingApiErrors(response);
             }
         } catch (IOException e) {
-            throw new ExchangeRateClientException("Error de IO al obtener la tasa de cambio para " + description, e);
+            throw new ApiClientException("Error IO al consultar la información cambiaría para " + description, e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new InterruptedException("Operación interrumpida al obtener la tasa de cambio para " + description);
+            throw new InterruptedException("Operación interrumpida al consultar la información cambiaría para " + description);
         }
     }
 
-    private ExchangeRateClientException handleApiError(HttpResponse<String> response) throws ExchangeRateClientException {
+    private ApiClientException handlingApiErrors(HttpResponse<String> response) throws ApiClientException {
         String errorBody = response.body();
-        String errorMessage = "Error al obtener la tasa de cambio. Código de estado: " + response.statusCode();
+        String errorMessage = "Error al consultar la información cambiaría. Código de estado: " + response.statusCode();
 
         try {
             Gson gson = new Gson();
@@ -83,6 +83,6 @@ public class ExchangeRateClient {
         } catch (Exception e) {
             errorMessage += ". Error inesperado al procesar la respuesta del error: " + errorBody;
         }
-        throw new ExchangeRateClientException(errorMessage);
+        throw new ApiClientException(errorMessage);
     }
 }
