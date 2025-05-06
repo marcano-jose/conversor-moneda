@@ -10,8 +10,8 @@ public class Main {
         String apiKey = System.getenv("MI_API_KEY");
 
         if (apiKey == null || apiKey.trim().isEmpty()) {
-            throw new IllegalStateException("Variable de entorno, MI_API_KEY, sin configurar o vacía. \n" +
-                    "La aplicación no puede continuar.");
+            throw new IllegalStateException("\nVariable de entorno, MI_API_KEY, sin configurar o vacía." +
+                    "\nLa aplicación no puede continuar.");
         }
         System.out.println("API Key obtenida del entorno del Sistema Operativo.");
 
