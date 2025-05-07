@@ -16,7 +16,7 @@ public class ExchangeRates {
     public void showExchangeInfo(ExchangeRateInformation response) {
         Date fecha = new Date(response.getTime_last_update_unix() * 1000);
         System.out.println("Ultima actualización: " + fecha);
-        System.out.println("Base: Dólar estadounidense (" + response.getBase_code() + ")");
+        System.out.println("Base: " + response.getBase_code());
         System.out.println("Tasas de las monedas preferidas:");
         showFilteredRates(response.getConversion_rates());
     }
@@ -38,6 +38,7 @@ public class ExchangeRates {
             case "BRL" -> "Real brasileño";
             case "CLP" -> "Peso chileno";
             case "COP" -> "Peso colombiano";
+            case "USD" -> "Dólar estadounidense";
             default -> currencyCode; // Si no se encuentra, devuelve el código
         };
     }

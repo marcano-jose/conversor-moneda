@@ -19,11 +19,11 @@ public class Main {
         System.out.println("API Key obtenida del entorno del Sistema Operativo.");
 
         String baseCurrency = "USD";
-        List<String> preferredCurrencies = Arrays.asList("ARS", "OB", "BRL", "CLP", "COP");
+        List<String> preferredCurrencies = Arrays.asList("ARS", "BOB", "BRL", "CLP", "COP", "USD");
 
         ApiClient apiClient = new ApiClient(apiKey);
         ExchangeRates rates = new ExchangeRates(preferredCurrencies);
-        //ExchangeCalculator calculator = new ExchangeCalculator();
+        ExchangeCalculator calculator = new ExchangeCalculator();
 
         try {
             String exchangeRateJson = apiClient.lookupInfo(baseCurrency);
@@ -32,7 +32,7 @@ public class Main {
             ExchangeRateInformation response = gson.fromJson(exchangeRateJson, ExchangeRateInformation.class);
 
             rates.showExchangeInfo(response);
-            //calculator.show();
+            calculator.show();
 
         } catch (ApiClientException e) {
             System.err.println(e.getMessage());
