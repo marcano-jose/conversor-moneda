@@ -1,4 +1,4 @@
-package com.aluracursos.conversormoneda.services;
+package com.aluracursos.conversormoneda.utils;
 
 public class ApiClientException extends Exception {
     public ApiClientException(String message) {

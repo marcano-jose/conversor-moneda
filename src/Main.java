@@ -1,8 +1,7 @@
-import com.aluracursos.conversormoneda.models.ExchangeRateInformation;
+import com.aluracursos.conversormoneda.models.RatesInformation;
 import com.aluracursos.conversormoneda.services.ApiClient;
-import com.aluracursos.conversormoneda.services.ApiClientException;
-import com.aluracursos.conversormoneda.services.ExchangeCalculator;
-import com.aluracursos.conversormoneda.services.ExchangeRates;
+import com.aluracursos.conversormoneda.utils.ApiClientException;
+import com.aluracursos.conversormoneda.services.Calculator;
 import com.google.gson.Gson;
 
 import java.util.Arrays;
@@ -16,23 +15,22 @@ public class Main {
             throw new IllegalStateException("Variable de entorno, MI_API_KEY, sin configurar o vacía. " +
                     "La aplicación no puede continuar.");
         }
-        System.out.println("API Key obtenida del entorno del Sistema Operativo.");
 
         String baseCurrency = "USD";
         List<String> preferredCurrencies = Arrays.asList("ARS", "BOB", "BRL", "CLP", "COP", "USD");
 
         ApiClient apiClient = new ApiClient(apiKey);
-        ExchangeRates rates = new ExchangeRates(preferredCurrencies);
-        ExchangeCalculator calculator = new ExchangeCalculator();
+        // ExchangeRates rates = new ExchangeRates(preferredCurrencies);
+        Calculator calculator = new Calculator();
 
         try {
             String exchangeRateJson = apiClient.lookupInfo(baseCurrency);
 
             Gson gson = new Gson();
-            ExchangeRateInformation response = gson.fromJson(exchangeRateJson, ExchangeRateInformation.class);
+            RatesInformation response = gson.fromJson(exchangeRateJson, RatesInformation.class);
 
-            rates.showExchangeInfo(response);
-            calculator.show();
+            // rates.showExchangeInfo(response);
+            calculator.display();
 
         } catch (ApiClientException e) {
             System.err.println(e.getMessage());

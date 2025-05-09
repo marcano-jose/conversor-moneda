@@ -1,19 +1,19 @@
 package com.aluracursos.conversormoneda.services;
 
-import com.aluracursos.conversormoneda.models.ExchangeRateInformation;
+import com.aluracursos.conversormoneda.models.RatesInformation;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class ExchangeRates {
+public class Rates {
     private final List<String> preferredCurrencies;
 
-    public ExchangeRates(List<String> preferredCurrencies) {
+    public Rates(List<String> preferredCurrencies) {
         this.preferredCurrencies = preferredCurrencies;
     }
 
-    public void showExchangeInfo(ExchangeRateInformation response) {
+    public void showExchangeInfo(RatesInformation response) {
         Date fecha = new Date(response.getTime_last_update_unix() * 1000);
         System.out.println("Ultima actualización: " + fecha);
         System.out.println("Base: " + response.getBase_code());

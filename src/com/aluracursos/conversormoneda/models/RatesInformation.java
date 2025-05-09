@@ -2,7 +2,7 @@ package com.aluracursos.conversormoneda.models;
 
 import java.util.Map;
 
-public class ExchangeRateInformation {
+public class RatesInformation {
     private long time_last_update_unix;
     private String base_code;
     private Map<String, Double> conversion_rates;
