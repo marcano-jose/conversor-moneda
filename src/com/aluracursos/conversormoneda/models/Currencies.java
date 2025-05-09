@@ -18,6 +18,10 @@ public enum Currencies {
         return name;
     }
 
+    public String getCode() {
+        return this.name(); // El nombre de la constante enum (ARS, BOB, etc.) es el código.
+    }
+
     @Override
     public String toString() {
         return name;

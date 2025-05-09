@@ -1,45 +1,70 @@
 package com.aluracursos.conversormoneda.services;
 
+import com.aluracursos.conversormoneda.models.Currencies;
 import com.aluracursos.conversormoneda.models.RatesInformation;
+import com.aluracursos.conversormoneda.utils.ApiClientException;
+import com.aluracursos.conversormoneda.utils.InputHandler;
+import com.aluracursos.conversormoneda.utils.UserInterface;
+import com.google.gson.Gson;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 public class Rates {
-    private final List<String> preferredCurrencies;
+    private final UserInterface userInterface;
+    private final InputHandler inputHandler;
+    private final String apiKey;
 
-    public Rates(List<String> preferredCurrencies) {
-        this.preferredCurrencies = preferredCurrencies;
+    public Rates(String apiKey) {
+        this.userInterface = new UserInterface();
+        this.inputHandler = new InputHandler();
+        this.apiKey = apiKey;
     }
 
-    public void showExchangeInfo(RatesInformation response) {
-        Date fecha = new Date(response.getTime_last_update_unix() * 1000);
-        System.out.println("Ultima actualización: " + fecha);
-        System.out.println("Base: " + response.getBase_code());
-        System.out.println("Tasas de las monedas preferidas:");
-        showFilteredRates(response.getConversion_rates());
-    }
+    public void showExchangeRates() {
+        userInterface.displayHeaderMessage("  Tasas  Cambiarías");
+        userInterface.displayCurrenciesCodes();
 
-    private void showFilteredRates(Map<String, Double> rates) {
-        for (String currency : preferredCurrencies) {
-            if (rates.containsKey(currency)) {
-                System.out.println("- " + currencyName(currency) + " (" + currency + "): " + rates.get(currency));
-            } else {
-                System.out.println("- (" + currencyName(currency) + "): No disponible en esta consulta.");
+        Currencies baseCurrency = inputHandler.readCurrency("\nMoneda base (código): ");
+
+        ApiClient apiClient = new ApiClient(apiKey);
+
+        try {
+            String exchangeRateJson = apiClient.lookupInfo(baseCurrency.getCode());
+
+            Gson gson = new Gson();
+            RatesInformation response = gson.fromJson(exchangeRateJson, RatesInformation.class);
+
+            showGeneralInformation(response);
+
+        } catch (ApiClientException e) {
+            System.err.println(e.getMessage());
+
+            if (e.getCause() != null) {
+                System.err.println(e.getCause().getMessage());
             }
+
+        } catch (InterruptedException e) {
+            System.err.println(e.getMessage());
+            Thread.currentThread().interrupt();
         }
     }
 
-    private String currencyName(String currencyCode) {
-        return switch (currencyCode) {
-            case "ARS" -> "Peso argentino";
-            case "BOB" -> "Boliviano boliviano";
-            case "BRL" -> "Real brasileño";
-            case "CLP" -> "Peso chileno";
-            case "COP" -> "Peso colombiano";
-            case "USD" -> "Dólar estadounidense";
-            default -> currencyCode; // Si no se encuentra, devuelve el código
-        };
+    public void showGeneralInformation(RatesInformation response) {
+        Date fecha = new Date(response.getTime_last_update_unix() * 1000);
+        System.out.println("\nUltima actualización: " + fecha);
+        System.out.println("Base: " + response.getBase_code());
+        showPreferredRates(response.getConversion_rates());
+    }
+
+    private void showPreferredRates(Map<String, Double> rates) {
+        System.out.println("\nTasas de las monedas preferidas:");
+        for (Currencies currency : Currencies.values()) {
+            if (rates.containsKey(currency.getCode())) {
+                System.out.println("- " + currency.getName() + " (" + currency.getCode() + "): " + rates.get(currency.getCode()));
+            } else {
+                System.out.println("- (" + currency.getName() + "): No disponible en esta consulta.");
+            }
+        }
     }
 }

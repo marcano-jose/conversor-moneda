@@ -4,12 +4,12 @@ import com.aluracursos.conversormoneda.models.Currencies;
 
 public class UserInterface {
 
-    public void displayHeaderMessage() {
-        System.out.println("""
+    public void displayHeaderMessage(String prompt) {
+        System.out.printf("""
                 -----------------------
-                 Calculadora Cambiaría
+                 %s
                 -----------------------
-                """);
+                \n""", prompt);
     }
 
     public void displayCurrenciesCodes() {

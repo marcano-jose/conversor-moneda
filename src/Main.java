@@ -1,11 +1,5 @@
-import com.aluracursos.conversormoneda.models.RatesInformation;
-import com.aluracursos.conversormoneda.services.ApiClient;
-import com.aluracursos.conversormoneda.utils.ApiClientException;
 import com.aluracursos.conversormoneda.services.Calculator;
-import com.google.gson.Gson;
-
-import java.util.Arrays;
-import java.util.List;
+import com.aluracursos.conversormoneda.services.Rates;
 
 public class Main {
     public static void main(String[] args) {
@@ -16,32 +10,10 @@ public class Main {
                     "La aplicación no puede continuar.");
         }
 
-        String baseCurrency = "USD";
-        List<String> preferredCurrencies = Arrays.asList("ARS", "BOB", "BRL", "CLP", "COP", "USD");
+        Rates rates = new Rates(apiKey);
+        //Calculator calculator = new Calculator(apiKey);
 
-        ApiClient apiClient = new ApiClient(apiKey);
-        // ExchangeRates rates = new ExchangeRates(preferredCurrencies);
-        Calculator calculator = new Calculator();
-
-        try {
-            String exchangeRateJson = apiClient.lookupInfo(baseCurrency);
-
-            Gson gson = new Gson();
-            RatesInformation response = gson.fromJson(exchangeRateJson, RatesInformation.class);
-
-            // rates.showExchangeInfo(response);
-            calculator.display();
-
-        } catch (ApiClientException e) {
-            System.err.println(e.getMessage());
-
-            if (e.getCause() != null) {
-                System.err.println(e.getCause().getMessage());
-            }
-
-        } catch (InterruptedException e) {
-            System.err.println(e.getMessage());
-            Thread.currentThread().interrupt();
-        }
+        rates.showExchangeRates();
+        //calculator.display();
     }
 }

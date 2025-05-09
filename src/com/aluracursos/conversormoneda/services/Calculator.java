@@ -7,14 +7,16 @@ import com.aluracursos.conversormoneda.utils.UserInterface;
 public class Calculator {
     private final UserInterface userInterface;
     private final InputHandler inputHandler;
+    private final String apiKey;
 
-    public Calculator() {
+    public Calculator(String apiKey) {
         this.userInterface = new UserInterface();
         this.inputHandler = new InputHandler();
+        this.apiKey = apiKey;
     }
 
     public void display() {
-        userInterface.displayHeaderMessage();
+        userInterface.displayHeaderMessage("Calculadora Cambiaría");
         userInterface.displayCurrenciesCodes();
 
         double amount = inputHandler.readDecimal("\nMonto a convertir: ");
