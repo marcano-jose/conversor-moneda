@@ -11,9 +11,9 @@ public class Main {
         }
 
         Rates rates = new Rates(apiKey);
-        //Calculator calculator = new Calculator(apiKey);
+        Calculator calculator = new Calculator(apiKey);
 
         rates.showExchangeRates();
-        //calculator.display();
+        calculator.showExchangeCalculator();
     }
 }

@@ -6,6 +6,8 @@ public class RatesInformation {
     private long time_last_update_unix;
     private String base_code;
     private Map<String, Double> conversion_rates;
+    private Double conversion_rate;
+
 
     public long getTime_last_update_unix() {
         return time_last_update_unix;
@@ -17,5 +19,9 @@ public class RatesInformation {
 
     public Map<String, Double> getConversion_rates() {
         return conversion_rates;
+    }
+
+    public Double getConversion_rate() {
+        return conversion_rate;
     }
 }

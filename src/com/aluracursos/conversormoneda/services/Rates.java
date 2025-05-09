@@ -51,9 +51,9 @@ public class Rates {
     }
 
     public void showGeneralInformation(RatesInformation response) {
-        Date fecha = new Date(response.getTime_last_update_unix() * 1000);
-        System.out.println("\nUltima actualización: " + fecha);
-        System.out.println("Base: " + response.getBase_code());
+        Date lastUpdate = new Date(response.getTime_last_update_unix() * 1000);
+        System.out.println("\nUltima actualización: " + lastUpdate);
+        System.out.println("Base: (" + response.getBase_code() + ")");
         showPreferredRates(response.getConversion_rates());
     }
 
@@ -61,7 +61,10 @@ public class Rates {
         System.out.println("\nTasas de las monedas preferidas:");
         for (Currencies currency : Currencies.values()) {
             if (rates.containsKey(currency.getCode())) {
-                System.out.println("- " + currency.getName() + " (" + currency.getCode() + "): " + rates.get(currency.getCode()));
+                System.out.printf("- %s (%s): %,.2f%n",
+                        currency.getName(),
+                        currency.getCode(),
+                        rates.get(currency.getCode()));
             } else {
                 System.out.println("- (" + currency.getName() + "): No disponible en esta consulta.");
             }

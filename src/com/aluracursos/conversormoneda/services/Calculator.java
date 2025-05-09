@@ -1,8 +1,11 @@
 package com.aluracursos.conversormoneda.services;
 
 import com.aluracursos.conversormoneda.models.Currencies;
+import com.aluracursos.conversormoneda.models.RatesInformation;
+import com.aluracursos.conversormoneda.utils.ApiClientException;
 import com.aluracursos.conversormoneda.utils.InputHandler;
 import com.aluracursos.conversormoneda.utils.UserInterface;
+import com.google.gson.Gson;
 
 public class Calculator {
     private final UserInterface userInterface;
@@ -15,7 +18,7 @@ public class Calculator {
         this.apiKey = apiKey;
     }
 
-    public void display() {
+    public void showExchangeCalculator() {
         userInterface.displayHeaderMessage("Calculadora Cambiaría");
         userInterface.displayCurrenciesCodes();
 
@@ -23,9 +26,32 @@ public class Calculator {
         Currencies sourceCurrencies = inputHandler.readCurrency("\nMoneda origen (código): ");
         Currencies targetCurrencies = inputHandler.readCurrency("\nMoneda destino (código): ");
 
-        // Aquí irá la lógica para realizar la conversión utilizando las monedas y el monto
-        System.out.println("\nRealizando conversión de " + amount + " " + sourceCurrencies.getName() +
-                " a " + targetCurrencies.getName() + "...");
-        // Aquí se puede llamar a la ApiClient
+        ApiClient apiClient = new ApiClient(apiKey);
+
+        try {
+            String exchangeRateJson = apiClient.lookupInfo(sourceCurrencies.getCode(), targetCurrencies.getCode() );
+
+            Gson gson = new Gson();
+            RatesInformation response = gson.fromJson(exchangeRateJson, RatesInformation.class);
+
+            Double conversion = amount * response.getConversion_rate();
+
+            System.out.printf("\nConversión: %,.2f (%s) => %,.2f (%s)%n",
+                    amount,
+                    sourceCurrencies.getCode(),
+                    conversion,
+                    targetCurrencies.getCode());
+
+        } catch (ApiClientException e) {
+            System.err.println(e.getMessage());
+
+            if (e.getCause() != null) {
+                System.err.println(e.getCause().getMessage());
+            }
+
+        } catch (InterruptedException e) {
+            System.err.println(e.getMessage());
+            Thread.currentThread().interrupt();
+        }
     }
 }
