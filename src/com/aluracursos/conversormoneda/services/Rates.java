@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.Map;
 
 public class Rates extends BaseRateService {
-
     public Rates(String apiKey) {
         super(apiKey);
     }

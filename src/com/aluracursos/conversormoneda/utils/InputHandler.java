@@ -20,6 +20,9 @@ public class InputHandler {
             String input = scanner.nextLine();
             try {
                 value = Double.parseDouble(input);
+                if (value <= 0) {
+                    throw new NumberFormatException();
+                }
                 isValidInput = true;
             } catch (NumberFormatException e) {
                 System.err.println("Error: Ingrese un valor numérico válido.");

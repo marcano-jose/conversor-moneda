@@ -6,7 +6,6 @@ import com.aluracursos.conversormoneda.models.RatesInformation;
 import com.aluracursos.conversormoneda.utils.ApiClientException;
 
 public class Calculator extends BaseRateService {
-
     public Calculator(String apiKey) {
         super(apiKey);
     }
@@ -22,7 +21,7 @@ public class Calculator extends BaseRateService {
         try {
             RatesInformation response = fetchRatesInformation(sourceCurrencies.getCode(), targetCurrencies.getCode());
             CurrenciesPair currenciesPair = new CurrenciesPair(sourceCurrencies, targetCurrencies);
-            aunSinNombre(response, amount, currenciesPair);
+            showConversionResult(response, amount, currenciesPair);
 
         } catch (ApiClientException e) {
             handleApiException(e);
@@ -31,7 +30,7 @@ public class Calculator extends BaseRateService {
         }
     }
 
-    private void aunSinNombre(RatesInformation response, Double amount, CurrenciesPair currenciesPair) {
+    private void showConversionResult(RatesInformation response, Double amount, CurrenciesPair currenciesPair) {
         Double conversion = amount * response.getConversion_rate();
 
         System.out.printf("\nConversión: %,.2f (%s) => %,.2f (%s)%n",
