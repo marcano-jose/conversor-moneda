@@ -1,6 +1,5 @@
-package com.aluracursos.conversormoneda.services;
+package com.aluracursos.conversormoneda.utils;
 
-import com.aluracursos.conversormoneda.utils.ApiClientException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;

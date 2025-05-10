@@ -3,22 +3,14 @@ package com.aluracursos.conversormoneda.services;
 import com.aluracursos.conversormoneda.models.Currencies;
 import com.aluracursos.conversormoneda.models.RatesInformation;
 import com.aluracursos.conversormoneda.utils.ApiClientException;
-import com.aluracursos.conversormoneda.utils.InputHandler;
-import com.aluracursos.conversormoneda.utils.UserInterface;
-import com.google.gson.Gson;
 
 import java.util.Date;
 import java.util.Map;
 
-public class Rates {
-    private final UserInterface userInterface;
-    private final InputHandler inputHandler;
-    private final String apiKey;
+public class Rates extends BaseRateService {
 
     public Rates(String apiKey) {
-        this.userInterface = new UserInterface();
-        this.inputHandler = new InputHandler();
-        this.apiKey = apiKey;
+        super(apiKey);
     }
 
     public void showExchangeRates() {
@@ -27,30 +19,18 @@ public class Rates {
 
         Currencies baseCurrency = inputHandler.readCurrency("\nMoneda base (código): ");
 
-        ApiClient apiClient = new ApiClient(apiKey);
-
         try {
-            String exchangeRateJson = apiClient.lookupInfo(baseCurrency.getCode());
-
-            Gson gson = new Gson();
-            RatesInformation response = gson.fromJson(exchangeRateJson, RatesInformation.class);
-
+            RatesInformation response = fetchRatesInformation(baseCurrency.getCode());
             showGeneralInformation(response);
 
         } catch (ApiClientException e) {
-            System.err.println(e.getMessage());
-
-            if (e.getCause() != null) {
-                System.err.println(e.getCause().getMessage());
-            }
-
+            handleApiException(e);
         } catch (InterruptedException e) {
-            System.err.println(e.getMessage());
-            Thread.currentThread().interrupt();
+            handleInterruptedException(e);
         }
     }
 
-    public void showGeneralInformation(RatesInformation response) {
+    private void showGeneralInformation(RatesInformation response) {
         Date lastUpdate = new Date(response.getTime_last_update_unix() * 1000);
         System.out.println("\nUltima actualización: " + lastUpdate);
         System.out.println("Base: (" + response.getBase_code() + ")");

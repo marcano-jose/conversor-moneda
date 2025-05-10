@@ -10,10 +10,10 @@ public class Main {
                     "La aplicación no puede continuar.");
         }
 
-        Rates rates = new Rates(apiKey);
+        //Rates rates = new Rates(apiKey);
         Calculator calculator = new Calculator(apiKey);
 
-        rates.showExchangeRates();
+        //rates.showExchangeRates();
         calculator.showExchangeCalculator();
     }
 }
