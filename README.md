@@ -1,10 +1,22 @@
-# Conversor de Moneda
+# Conversor de Moneda <!-- omit from toc -->
+
+## Índice <!-- omit from toc -->
+
+- [Descripción](#descripción)
+- [Características](#características)
+- [Tecnologías empleadas](#tecnologías-empleadas)
+- [Instalación y ejecución](#instalación-y-ejecución)
+- [Uso](#uso)
+- [Diagrama UML de Clase](#diagrama-uml-de-clase)
+- [Mejoras futuras](#mejoras-futuras)
+
+## Descripción
+
+Esta aplicación demuestra la sólida comprensión de los principios de la Programación Orientada a Objetos y las buenas prácticas de desarrollo en Java. La clara separación de responsabilidades, el manejo robusto de errores y el uso de características modernas del lenguaje contribuyen a una aplicación bien estructurada, mantenible y extensible.
 
 <div align="center">
   <img src="demo.gif" style="border-radius: 10px;">
 </div>
-
-Esta aplicación demuestra la sólida comprensión de los principios de la Programación Orientada a Objetos y las buenas prácticas de desarrollo en Java. La clara separación de responsabilidades, el manejo robusto de errores y el uso de características modernas del lenguaje contribuyen a una aplicación bien estructurada, mantenible y extensible.
 
 ## Características
 
@@ -106,11 +118,11 @@ Resaltando lo siguiente:
 git clone https://github.com/marcanojuan/conversor-moneda.git
 ```
 
-2.
+2. Falta 
 
 ## Uso
 
-<<Falta>>
+Falta
 
 ## Diagrama UML de Clase
 
