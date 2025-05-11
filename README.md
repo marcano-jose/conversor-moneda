@@ -1,5 +1,9 @@
 # Conversor de Moneda
 
+<div align="center">
+  <img src="demo.gif" style="border-radius: 10px;">
+</div>
+
 Esta aplicación demuestra la sólida comprensión de los principios de la Programación Orientada a Objetos y las buenas prácticas de desarrollo en Java. La clara separación de responsabilidades, el manejo robusto de errores y el uso de características modernas del lenguaje contribuyen a una aplicación bien estructurada, mantenible y extensible.
 
 ## Características
@@ -8,21 +12,21 @@ La aplicación se estructura de la siguiente forma:
 
 - Main.java
 - com.aluracursos.conversormoneda
-    - models
-        - Currencies.java
-        - CurriencesPair.java
-        - MenuOptions.java
-        - RatesInformation.java
-    - services
-        - BaseRateService.java
-        - Calculator.java
-        - Rates.java
-    - utils
-        - ApiClient.java
-        - ApiClientException.java
-        - InputHandler.java
-        - MenuBuilder.java
-        - UserInterface.java
+  - models
+    - Currencies.java
+    - CurriencesPair.java
+    - MenuOptions.java
+    - RatesInformation.java
+  - services
+    - BaseRateService.java
+    - Calculator.java
+    - Rates.java
+  - utils
+    - ApiClient.java
+    - ApiClientException.java
+    - InputHandler.java
+    - MenuBuilder.java
+    - UserInterface.java
 
 Resaltando lo siguiente:
 
@@ -90,7 +94,7 @@ Resaltando lo siguiente:
 
 ## Tecnologías empleadas
 
-- Fedora Linux 41 (Workstation Edition) 
+- Fedora Linux 41 (Workstation Edition)
 - openjdk 17.0.15
 - IntelliJ IDEA 2025.1.1.1 (Community Edition)
 
@@ -98,17 +102,21 @@ Resaltando lo siguiente:
 
 1. Clonar este repositorio:
 
-```
+``` bash
 git clone https://github.com/marcanojuan/conversor-moneda.git
 ```
 
-2. 
+2.
 
 ## Uso
 
+<<Falta>>
 
 ## Diagrama UML de Clase
 
+<div align="center">
+  <a href="umlDiagram.png"><img src="umlDiagram.png" style="border-radius: 10px;"></a>
+</div>
 
 ## Mejoras futuras
 
@@ -117,4 +125,3 @@ git clone https://github.com/marcanojuan/conversor-moneda.git
 - **Soporte para más monedas**: Extender la selección de divisas disponibles para la conversión, posibilitando a los usuarios operar entre un espectro más amplio de opciones monetarias.
 
 - **Registros con marca de tiempo**: Emplear las funcionalidades de la biblioteca `java.time` para generar registros de las conversiones efectuadas, detallando las monedas involucradas y la hora exacta de cada operación.
-
