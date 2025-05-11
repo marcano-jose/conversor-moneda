@@ -6,7 +6,7 @@ public class UserInterface {
 
     public void displayHeaderMessage(String prompt) {
         System.out.printf("""
-                -----------------------
+                \n-----------------------
                  %s
                 -----------------------
                 \n""", prompt);

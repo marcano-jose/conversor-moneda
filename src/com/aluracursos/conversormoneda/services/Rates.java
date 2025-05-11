@@ -8,15 +8,15 @@ import java.util.Date;
 import java.util.Map;
 
 public class Rates extends BaseRateService {
-    public Rates(String apiKey) {
-        super(apiKey);
+    public Rates(String APIKEY) {
+        super(APIKEY);
     }
 
     public void showExchangeRates() {
         userInterface.displayHeaderMessage("  Tasas  Cambiarías");
         userInterface.displayCurrenciesCodes();
 
-        Currencies baseCurrency = inputHandler.readCurrency("\nMoneda base (código): ");
+        Currencies baseCurrency = inputHandler.readCurrency("Moneda base (código): ");
 
         try {
             RatesInformation response = fetchRatesInformation(baseCurrency.getCode());

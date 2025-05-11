@@ -6,15 +6,15 @@ import com.aluracursos.conversormoneda.models.RatesInformation;
 import com.aluracursos.conversormoneda.utils.ApiClientException;
 
 public class Calculator extends BaseRateService {
-    public Calculator(String apiKey) {
-        super(apiKey);
+    public Calculator(String APIKEY) {
+        super(APIKEY);
     }
 
     public void showExchangeCalculator() {
         userInterface.displayHeaderMessage("Calculadora Cambiaría");
         userInterface.displayCurrenciesCodes();
 
-        double amount = inputHandler.readDecimal("\nMonto a convertir: ");
+        double amount = inputHandler.readDecimal("Monto a convertir: ");
         Currencies sourceCurrencies = inputHandler.readCurrency("\nMoneda origen (código): ");
         Currencies targetCurrencies = inputHandler.readCurrency("\nMoneda destino (código): ");
 

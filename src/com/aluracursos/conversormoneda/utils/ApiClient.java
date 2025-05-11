@@ -17,22 +17,22 @@ public class ApiClient {
     private static final int CONNECT_TIMEOUT_SECONDS = 20;
     private static final int REQUEST_TIMEOUT_MINUTES = 2;
     private final HttpClient httpClient;
-    private final String apiKey;
+    private final String APIKEY;
 
-    public ApiClient(String apiKey) {
+    public ApiClient(String APIKEY) {
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(CONNECT_TIMEOUT_SECONDS))
                 .build();
-        this.apiKey = apiKey;
+        this.APIKEY = APIKEY;
     }
 
     public String lookupInfo(String baseCurrency) throws ApiClientException, InterruptedException {
-        String urlRequest = API_URL_BASE + apiKey + "/latest/" + baseCurrency;
+        String urlRequest = API_URL_BASE + APIKEY + "/latest/" + baseCurrency;
         return queryInfo(urlRequest, baseCurrency);
     }
 
     public String lookupInfo(String baseCurrency, String targetCurrency) throws ApiClientException, InterruptedException {
-        String urlRequest = API_URL_BASE + apiKey + "/pair/" + baseCurrency + "/" + targetCurrency;
+        String urlRequest = API_URL_BASE + APIKEY + "/pair/" + baseCurrency + "/" + targetCurrency;
         String description = "el par " + baseCurrency + "-" + targetCurrency;
         return queryInfo(urlRequest, description);
     }
