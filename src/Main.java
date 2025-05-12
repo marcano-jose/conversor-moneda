@@ -1,5 +1,3 @@
-package com.aluracursos.conversormoneda;
-
 import com.aluracursos.conversormoneda.services.Calculator;
 import com.aluracursos.conversormoneda.services.Rates;
 import com.aluracursos.conversormoneda.utils.InputHandler;

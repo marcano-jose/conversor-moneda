@@ -2,47 +2,57 @@
 
 ## Índice <!-- omit from toc -->
 
-- [Descripción](#descripción)
-- [Características](#características)
+- [Descripción general](#descripción-general)
+- [Diagrama UML de Clase](#diagrama-uml-de-clase)
+- [Caracterízación](#caracterízación)
 - [Tecnologías empleadas](#tecnologías-empleadas)
 - [Instalación y ejecución](#instalación-y-ejecución)
 - [Uso](#uso)
-- [Diagrama UML de Clase](#diagrama-uml-de-clase)
 - [Mejoras futuras](#mejoras-futuras)
 
-## Descripción
+## Descripción general
 
-Esta aplicación demuestra la sólida comprensión de los principios de la Programación Orientada a Objetos y las buenas prácticas de desarrollo en Java. La clara separación de responsabilidades, el manejo robusto de errores y el uso de características modernas del lenguaje contribuyen a una aplicación bien estructurada, mantenible y extensible.
+Esta aplicación demuestra la comprensión de los principios de la Programación Orientada a Objetos (POO) y las buenas prácticas de desarrollo en Java. La clara separación de responsabilidades, el manejo robusto de errores y el uso de características modernas del lenguaje, contribuyen a una aplicación bien estructurada, mantenible y extensible.
 
 <div align="center">
   <img src="demo.gif" style="border-radius: 10px;">
 </div>
 
-## Características
+## Diagrama UML de Clase
 
-La aplicación se estructura de la siguiente forma:
+<div align="center">
+  <a href="umlDiagram.png"><img src="umlDiagram.png" style="border-radius: 10px;"></a>
+</div>
 
-- Main.java
-- com.aluracursos.conversormoneda
-  - models
-    - Currencies.java
-    - CurriencesPair.java
-    - MenuOptions.java
-    - RatesInformation.java
-  - services
-    - BaseRateService.java
-    - Calculator.java
-    - Rates.java
-  - utils
-    - ApiClient.java
-    - ApiClientException.java
-    - InputHandler.java
-    - MenuBuilder.java
-    - UserInterface.java
+## Caracterízación
 
-Resaltando lo siguiente:
+La organización del programa o aplicación en el sistema de archivos es la siguiente:
 
-1. **Claros Principios de Diseño Orientado a Objetos**:
+- conversor-moneda
+  - src
+    - Main.java
+    - com
+      - aluracursos
+        - conversormoneda
+          - models
+            - Currencies.java
+            - CurriencesPair.java
+            - MenuOptions.java
+            - RatesInformation.java
+          - services
+            - BaseRateService.java
+            - Calculator.java
+            - Rates.java
+          - utils
+            - ApiClient.java
+            - ApiClientException.java
+            - InputHandler.java
+            - MenuBuilder.java
+            - UserInterface.java
+
+A su vez, en el proyecto se ponen en práctica los siguientes fundamentos:
+
+1. **Claros principios de diseño orientado a objetos**
 
 - **Encapsulamiento**: Cada clase mantiene su propio estado y comportamiento, exponiendo solo lo necesario a través de métodos públicos. Por ejemplo, `Rates` y `Calculator` gestionan la lógica de obtención y cálculo de tasas, respectivamente, sin exponer directamente los detalles de la API o el manejo de datos.
 
@@ -52,7 +62,7 @@ Resaltando lo siguiente:
 
 - **Polimorfismo**: Se observa a través del uso de la interfaz `Runnable` en `MenuBuilder`. Diferentes acciones (mostrar tasas, calculadora, salir) pueden ser asociadas a las opciones del menú y ejecutadas de manera uniforme a través del método `run()`.
 
-2. **Separación de Responsabilidades (Single Responsibility Principle)**:
+2. **Separación de responsabilidades (Single Responsibility Principle)**
 
 - `Main`: Su única responsabilidad es la de inicializar la aplicación, configurar el menú principal y controlar el flujo de la interacción del usuario. No se encarga de la lógica de negocio de las tasas o los cálculos.
 
@@ -70,13 +80,13 @@ Resaltando lo siguiente:
 
 - **Clases en el paquete** `models`: Representan las estructuras de datos de la aplicación, como las monedas (`Currencies`), el par de monedas (`CurrenciesPair`), las opciones del menú (`MenuOptions`) y la información de las tasas (`RatesInformation`).
 
-3. **Uso de Patrones de Diseño Implícitos**:
+3. **Uso de patrones de diseño implícitos**
 
 - **Factory (Simple Factory)**: Aunque no es un patrón formalmente implementado con una clase factory explícita, la clase `MenuBuilder` actúa como una especie de fábrica para crear y gestionar las opciones del menú y sus acciones asociadas.
 
 - **Strategy**: El uso de `Runnable` para las acciones del menú permite definir diferentes estrategias (las implementaciones de `run()` en los métodos referenciados) que se ejecutan según la selección del usuario.
 
-4. **Robustez y Manejo de Errores**:
+4. **Robustez y manejo de errores**
 
 - **Validación de la clave de API**: El programa verifica al inicio que la variable de entorno `MI_API_KEY` esté configurada, evitando fallos posteriores por falta de autenticación.
 
@@ -86,13 +96,13 @@ Resaltando lo siguiente:
 
 - **Propagación y manejo de** `InterruptedException`: Se maneja la excepción `InterruptedException` al interactuar con la API, asegurando una respuesta adecuada en caso de interrupción del hilo.
 
-5. **Organización y Modularidad**:
+5. **Organización y modularidad**
 
 - **Uso de paquetes**: La aplicación está claramente organizada en paquetes (`models`, `services`, `utils`), lo que facilita la comprensión, el mantenimiento y la escalabilidad del código. Cada paquete agrupa clases con responsabilidades relacionadas.
 
 - **Clases pequeñas y enfocadas**: Cada clase tiende a tener una responsabilidad bien definida, lo que hace que el código sea más legible y fácil de probar.
 
-6. **Uso de Características Avanzadas de Java**:
+6. **Uso de características avanzadas de Java**:
 
 - **Enums** (`Currencies`): Se utiliza un `enum` para representar los códigos de moneda, lo que garantiza la seguridad de tipos y facilita la gestión de las monedas soportadas.
 
@@ -109,26 +119,52 @@ Resaltando lo siguiente:
 - Fedora Linux 41 (Workstation Edition)
 - openjdk 17.0.15
 - IntelliJ IDEA 2025.1.1.1 (Community Edition)
+- [ExchangeRate-API](https://www.exchangerate-api.com/)
+- [Postman](ttps://www.postman.com/explore)
+- [MvnRepository](https://mvnrepository.com/)
+- [Google Gson](https://github.com/google/gson)
 
 ## Instalación y ejecución
 
-1. Clonar este repositorio:
+1. Obtener API Key de [ExchangeRate-API](https://app.exchangerate-api.com/sign-up)
+
+2. Configurar la API Key como variable de entorno de sistema para que el programa pueda ejecutarse correctamente.
+
+3. Clonar en el directorio de descarga este repositorio:
 
 ``` bash
 git clone https://github.com/marcanojuan/conversor-moneda.git
 ```
 
-2. Falta 
+4. Descargar desde [MvnRepository](https://mvnrepository.com/) la libreria `Gson Ver. 2.13.1`y mover al directorio raiz del proyecto:
+
+``` bash
+mv gson-2.13.1.jar conversor-moneda
+``` 
+
+5. Acceder al directorio raiz del proyecto:
+
+``` bash
+cd conversor-moneda
+```
+
+6. Compilar el proyecto:
+
+``` bash
+javac -cp ".:gson-2.13.1.jar" src/Main.java src/com/aluracursos/conversormoneda/**/*.java -d out
+```
+
+7. Ejecutar el proyecto compilado:
+
+``` bash
+java -cp "out:gson-2.13.1.jar" com.aluracursos/conversormoneda.Main
+```
+
+> La ejecución de los comando es bajo la plataforma GNU/Linux.
 
 ## Uso
 
 Falta
-
-## Diagrama UML de Clase
-
-<div align="center">
-  <a href="umlDiagram.png"><img src="umlDiagram.png" style="border-radius: 10px;"></a>
-</div>
 
 ## Mejoras futuras
 
