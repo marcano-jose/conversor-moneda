@@ -7,7 +7,7 @@
 - [Caracterízación](#caracterízación)
 - [Tecnologías empleadas](#tecnologías-empleadas)
 - [Instalación y ejecución](#instalación-y-ejecución)
-- [Uso](#uso)
+- [Funcionamiento](#funcionamiento)
 - [Mejoras futuras](#mejoras-futuras)
 
 ## Descripción general
@@ -160,11 +160,11 @@ javac -cp ".:gson-2.13.1.jar" src/Main.java src/com/aluracursos/conversormoneda/
 java -cp "out:gson-2.13.1.jar" com.aluracursos/conversormoneda.Main
 ```
 
-> La ejecución de los comando es bajo la plataforma GNU/Linux.
+> _La ejecución de los comando es bajo la plataforma GNU/Linux._
 
-## Uso
+## Funcionamiento
 
-Falta
+El programa es interactivo y basado en un menú. El usuario elige la funcionalidad deseada (ver tasas o calcular conversión) ingresando un número, y luego proporciona la información requerida (monedas base/destino, monto) a través de la consola. La aplicación se encarga de comunicarse con una API externa para obtener los datos necesarios y muestra los resultados al usuario.
 
 ## Mejoras futuras
 
