@@ -135,35 +135,25 @@ A su vez, en el proyecto se ponen en práctica los siguientes fundamentos:
 
 3. Clonar en el directorio de descarga este repositorio:
 
-``` bash
-git clone https://github.com/marcanojuan/conversor-moneda.git
-```
+`git clone https://github.com/marcanojuan/conversor-moneda.git`
 
 4. Descargar desde [MvnRepository](https://mvnrepository.com/) la libreria `Gson Ver. 2.13.1`y mover al directorio raiz del proyecto:
 
-``` bash
-mv gson-2.13.1.jar conversor-moneda
-``` 
+`mv gson-2.13.1.jar conversor-moneda`
 
 5. Acceder al directorio raiz del proyecto:
 
-``` bash
-cd conversor-moneda
-```
+`cd conversor-moneda`
 
 6. Compilar el proyecto:
 
-``` bash
-javac -cp ".:gson-2.13.1.jar" src/Main.java src/com/aluracursos/conversormoneda/**/*.java -d out
-```
+`javac -cp ".:gson-2.13.1.jar" src/Main.java src/com/aluracursos/conversormoneda/**/*.java -d out`
 
 7. Ejecutar el proyecto compilado:
 
-``` bash
-java -cp "out:gson-2.13.1.jar" com.aluracursos/conversormoneda.Main
-```
+`java -cp "out:gson-2.13.1.jar" com.aluracursos/conversormoneda.Main`
 
-> _La ejecución de los comando es bajo la plataforma GNU/Linux._
+> _Nota: Todos los comandos son ejecutados bajo GNU/Linux._
 
 ## Funcionamiento
 
