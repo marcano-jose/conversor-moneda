@@ -1,4 +1,7 @@
 # Conversor de Moneda <!-- omit from toc -->
+<div align="lefth">
+  <img src="Badge-Conversor.png" style="height: 250px; width: auto;">
+</div>
 
 ## Índice <!-- omit from toc -->
 
