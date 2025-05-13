@@ -12,7 +12,6 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 
 public class ApiClient {
-
     private static final String API_URL_BASE = "https://v6.exchangerate-api.com/v6/";
     private static final int CONNECT_TIMEOUT_SECONDS = 20;
     private static final int REQUEST_TIMEOUT_MINUTES = 2;

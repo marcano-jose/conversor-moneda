@@ -1,6 +1,6 @@
 # Conversor de Moneda <!-- omit from toc -->
 <div align="lefth">
-  <img src="Badge-Conversor.png" style="height: 250px; width: auto;">
+  <img src="assets/Badge-Conversor.png" style="height: 250px; width: auto;">
 </div>
 
 ## Índice <!-- omit from toc -->
@@ -18,18 +18,18 @@
 Esta aplicación demuestra la comprensión de los principios de la Programación Orientada a Objetos (POO) y las buenas prácticas de desarrollo en Java. La clara separación de responsabilidades, el manejo robusto de errores y el uso de características modernas del lenguaje, contribuyen a una aplicación bien estructurada, mantenible y extensible.
 
 <div align="center">
-  <img src="demo.gif" style="border-radius: 10px;">
+  <img src="assets/demo.gif" style="border-radius: 10px;">
 </div>
 
-## Diagrama UML de Clase
+## Diagrama de clases UML
 
 <div align="center">
-  <a href="umlDiagram.png"><img src="umlDiagram.png" style="border-radius: 10px;"></a>
+  <a href="assets/diagramUml.svg"><img src="assets/diagramUml.svg" style="border-radius: 10px;"></a>
 </div>
 
 ## Caracterízación
 
-La organización del programa o aplicación en el sistema de archivos es la siguiente:
+La organización del programa en el sistema de archivos es la siguiente:
 
 - conversor-moneda
   - src
