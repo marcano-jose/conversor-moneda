@@ -6,7 +6,7 @@
 ## Índice <!-- omit from toc -->
 
 - [Descripción general](#descripción-general)
-- [Diagrama de Clases UML](#diagrama-de-clases-uml)
+- [Diagrama de clases UML](#diagrama-de-clases-uml)
 - [Caracterízación](#caracterízación)
 - [Tecnologías empleadas](#tecnologías-empleadas)
 - [Instalación y ejecución](#instalación-y-ejecución)
@@ -123,7 +123,7 @@ A su vez, en el proyecto se ponen en práctica los siguientes fundamentos:
 - openjdk 17.0.15
 - IntelliJ IDEA 2025.1.1.1 (Community Edition)
 - [ExchangeRate-API](https://www.exchangerate-api.com/)
-- [Postman](ttps://www.postman.com/explore)
+- [Postman](https://www.postman.com/explore)
 - [MvnRepository](https://mvnrepository.com/)
 - [Google Gson](https://github.com/google/gson)
 
