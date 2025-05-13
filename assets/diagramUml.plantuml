@@ -1,0 +1,145 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+skinparam classFontSize 12
+skinparam ArrowColor DarkGray
+skinparam BackgroundColor #FDFDFD
+skinparam ClassBackgroundColor #F9F9F9
+
+package "com.aluracursos.conversormoneda.models" {
+  enum Currencies {
+    ARS
+    BOB
+    BRL
+    CLP
+    COP
+    USD
+  }
+
+  class CurrenciesPair <<record>> {
+    - source: Currencies
+    - target: Currencies
+  }
+
+  class MenuOptions<T> {
+    - key: T
+    - description: String
+    - action: Runnable
+    + getKey(): T
+    + getDescription(): String
+    + getAction(): Runnable
+  }
+
+  class RatesInformation {
+    - time_last_update_unix: long
+    - base_code: String
+    - conversion_rates: Map<String, Double>
+    - conversion_rate: Double
+    + getTime_last_update_unix(): long
+    + getBase_code(): String
+    + getConversion_rates(): Map<String, Double>
+    + getConversion_rate(): Double
+  }
+}
+
+package "com.aluracursos.conversormoneda.services" {
+  abstract class BaseRateService {
+    - userInterface: UserInterface
+    - inputHandler: InputHandler
+    - apiKey: String
+    - apiClient: ApiClient
+    - gson: Gson
+    + fetchRatesInformation(code: String): RatesInformation
+    + fetchRatesInformation(sourceCode: String, targetCode: String): RatesInformation
+    + handleApiException(e: ApiClientException): void
+    + handleInterruptedException(e: InterruptedException): void
+  }
+
+  class Calculator {
+    + showExchangeCalculator(): void
+  }
+
+  class Rates {
+    + showExchangeRates(): void
+  }
+
+  BaseRateService <|-- Calculator
+  BaseRateService <|-- Rates
+}
+
+package "com.aluracursos.conversormoneda.utils" {
+  class ApiClient {
+    - APIKEY: String
+    + lookupInfo(baseCurrency: String): String
+    + lookupInfo(baseCurrency: String, targetCurrency: String): String
+  }
+
+  class ApiClientException {
+    + ApiClientException(message: String)
+    + ApiClientException(message: String, cause: Throwable)
+  }
+
+  class InputHandler {
+    - scanner: Scanner
+    + readDecimal(prompt: String): double
+    + readCurrency(prompt: String): Currencies
+    + closeScanner(): void
+  }
+
+  class MenuBuilder<T> {
+    - header: String
+    - description: String
+    - options: Map<T, MenuOptions<T>>
+    + addOption(key: T, description: String, action: Runnable): void
+    + display(): void
+    + getActionForOption(key: T): Runnable
+  }
+
+  class UserInterface {
+    + displayHeaderMessage(prompt: String): void
+    + displayCurrenciesCodes(): void
+  }
+}
+
+class Main {
+  - APIKEY: String
+  - MENU_HEADER: String
+  - MENU_DESCRIPTION: String
+  - OPTION_TASAS: Integer
+  - OPTION_CALCULADORA: Integer
+  - OPTION_SALIR: Integer
+  - INVALID_OPTION_MESSAGE: String
+  + main(args: String[]): void
+}
+
+' Relaciones entre clases
+Main --> Rates
+Main --> Calculator
+Main --> MenuBuilder
+Main --> InputHandler
+
+Calculator --> Currencies
+Calculator --> CurrenciesPair
+Calculator --> RatesInformation
+Calculator --> ApiClientException
+Calculator --> InputHandler
+Calculator --> UserInterface
+
+Rates --> Currencies
+Rates --> RatesInformation
+Rates --> ApiClientException
+Rates --> InputHandler
+Rates --> UserInterface
+
+BaseRateService --> ApiClient
+BaseRateService --> ApiClientException
+BaseRateService --> InputHandler
+BaseRateService --> UserInterface
+BaseRateService --> Gson
+
+MenuBuilder --> MenuOptions
+
+InputHandler --> Currencies
+
+UserInterface --> Currencies
+@enduml

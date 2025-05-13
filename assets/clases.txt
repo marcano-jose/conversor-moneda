@@ -1,0 +1,532 @@
+- Main.java:
+    
+import com.aluracursos.conversormoneda.services.Calculator;
+import com.aluracursos.conversormoneda.services.Rates;
+import com.aluracursos.conversormoneda.utils.InputHandler;
+import com.aluracursos.conversormoneda.utils.MenuBuilder;
+
+public class Main {
+    private static final String APIKEY = System.getenv("MI_API_KEY");
+    private static final String MENU_HEADER = " App. Conversor de Moneda";
+    private static final String MENU_DESCRIPTION = "Transacciones:";
+    private static final Integer OPTION_TASAS = 1;
+    private static final Integer OPTION_CALCULADORA = 2;
+    private static final Integer OPTION_SALIR = 3;
+    private static final String INVALID_OPTION_MESSAGE = "Error: Opción inválida. Por favor, elija una transacción válida.";
+
+    public static void main(String[] args) {
+	if (APIKEY == null || APIKEY.trim().isEmpty()) {
+	    throw new IllegalStateException("Variable de entorno, MI_API_KEY, sin configurar o vacía. " +
+	            "La aplicación no puede continuar.");
+	}
+
+	Rates rates = new Rates(APIKEY);
+	Calculator calculator = new Calculator(APIKEY);
+	MenuBuilder<Integer> menu = new MenuBuilder<>(MENU_HEADER, MENU_DESCRIPTION);
+	InputHandler inputData = new InputHandler();
+
+	menu.addOption(OPTION_TASAS, "Tasas", rates::showExchangeRates);
+	menu.addOption(OPTION_CALCULADORA, "Calculadora", calculator::showExchangeCalculator);
+	menu.addOption(OPTION_SALIR, "Salir", () -> System.out.println("Saliendo ..."));
+
+	Integer selection;
+	Runnable selectedAction;
+
+	do {
+	    menu.display();
+	    selection = (int) inputData.readDecimal("\nElegir transacción: ");
+	    selectedAction = menu.getActionForOption(selection);
+
+	    if (selectedAction != null) {
+	        selectedAction.run();
+	    } else {
+	        System.err.println(INVALID_OPTION_MESSAGE);
+	    }
+	} while (!selection.equals(OPTION_SALIR));
+
+	inputData.closeScanner();
+    }
+}
+    
+- Currencies.java:
+
+package com.aluracursos.conversormoneda.models;
+
+public enum Currencies {
+    ARS("Peso argentino"),
+    BOB("Boliviano boliviano"),
+    BRL("Real brasileño"),
+    CLP("Peso chileno"),
+    COP("Peso colombiano"),
+    USD("Dólar estadounidense");
+
+    private final String name;
+
+    Currencies(String name) {
+	this.name = name;
+    }
+
+    public String getName() {
+	return name;
+    }
+
+    public String getCode() {
+	return this.name(); // El nombre de la constante enum (ARS, BOB, etc.) es el código.
+    }
+
+    @Override
+    public String toString() {
+	return name;
+    }
+}
+
+- CurriencesPair.java:
+
+package com.aluracursos.conversormoneda.models;
+
+public record CurrenciesPair(Currencies source, Currencies target) {}
+
+- MenuOptions.java:
+           
+package com.aluracursos.conversormoneda.models;
+
+public class MenuOptions<T> {
+    private final T key;
+    private final String description;
+    private final Runnable action;
+
+    public MenuOptions(T key, String description, Runnable action) {
+	this.key = key;
+	this.description = description;
+	this.action = action;
+    }
+
+    public T getKey() {
+	return key;
+    }
+
+    public String getDescription() {
+	return description;
+    }
+
+    public Runnable getAction() {
+	return action;
+    }
+
+    @Override
+    public String toString() {
+	return key + ". " + description;
+    }
+}
+            
+- RatesInformation.java:
+            
+package com.aluracursos.conversormoneda.models;
+
+import java.util.Map;
+
+public class RatesInformation {
+    private long time_last_update_unix;
+    private String base_code;
+    private Map<String, Double> conversion_rates;
+    private Double conversion_rate;
+
+
+    public long getTime_last_update_unix() {
+	return time_last_update_unix;
+    }
+
+    public String getBase_code() {
+	return base_code;
+    }
+
+    public Map<String, Double> getConversion_rates() {
+	return conversion_rates;
+    }
+
+    public Double getConversion_rate() {
+	return conversion_rate;
+    }
+}
+
+- BaseRateService.java:
+            
+package com.aluracursos.conversormoneda.services;
+
+import com.aluracursos.conversormoneda.utils.ApiClient;
+import com.aluracursos.conversormoneda.utils.ApiClientException;
+import com.aluracursos.conversormoneda.utils.InputHandler;
+import com.aluracursos.conversormoneda.utils.UserInterface;
+import com.google.gson.Gson;
+import com.aluracursos.conversormoneda.models.RatesInformation;
+
+public abstract class BaseRateService {
+    protected final UserInterface userInterface;
+    protected final InputHandler inputHandler;
+    protected final String apiKey;
+    protected final ApiClient apiClient;
+    protected final Gson gson;
+
+    public BaseRateService(String apiKey) {
+	this.userInterface = new UserInterface();
+	this.inputHandler = new InputHandler();
+	this.apiKey = apiKey;
+	this.apiClient = new ApiClient(apiKey);
+	this.gson = new Gson();
+    }
+
+    protected RatesInformation fetchRatesInformation(String code) throws ApiClientException, InterruptedException {
+	String jsonResponse = apiClient.lookupInfo(code);
+	return gson.fromJson(jsonResponse, RatesInformation.class);
+    }
+
+    protected RatesInformation fetchRatesInformation(String sourceCode, String targetCode) throws ApiClientException, InterruptedException {
+	String jsonResponse = apiClient.lookupInfo(sourceCode, targetCode);
+	return gson.fromJson(jsonResponse, RatesInformation.class);
+    }
+
+    protected void handleApiException(ApiClientException e) {
+	System.err.println(e.getMessage());
+	if (e.getCause() != null) {
+	    System.err.println(e.getCause().getMessage());
+	}
+    }
+
+    protected void handleInterruptedException(InterruptedException e) {
+	System.err.println(e.getMessage());
+	Thread.currentThread().interrupt();
+    }
+}
+            
+- Calculator.java:
+            
+package com.aluracursos.conversormoneda.services;
+
+import com.aluracursos.conversormoneda.models.Currencies;
+import com.aluracursos.conversormoneda.models.CurrenciesPair;
+import com.aluracursos.conversormoneda.models.RatesInformation;
+import com.aluracursos.conversormoneda.utils.ApiClientException;
+
+public class Calculator extends BaseRateService {
+    public Calculator(String APIKEY) {
+	super(APIKEY);
+    }
+
+    public void showExchangeCalculator() {
+	userInterface.displayHeaderMessage("Calculadora Cambiaría");
+	userInterface.displayCurrenciesCodes();
+
+	double amount = inputHandler.readDecimal("Monto a convertir: ");
+	Currencies sourceCurrencies = inputHandler.readCurrency("\nMoneda origen (código): ");
+	Currencies targetCurrencies = inputHandler.readCurrency("\nMoneda destino (código): ");
+
+	try {
+	    RatesInformation response = fetchRatesInformation(sourceCurrencies.getCode(), targetCurrencies.getCode());
+	    CurrenciesPair currenciesPair = new CurrenciesPair(sourceCurrencies, targetCurrencies);
+	    showConversionResult(response, amount, currenciesPair);
+
+	} catch (ApiClientException e) {
+	    handleApiException(e);
+	} catch (InterruptedException e) {
+	    handleInterruptedException(e);
+	}
+    }
+
+    private void showConversionResult(RatesInformation response, Double amount, CurrenciesPair currenciesPair) {
+	Double conversion = amount * response.getConversion_rate();
+
+	System.out.printf("\nConversión: %,.2f (%s) => %,.2f (%s)%n",
+		amount,
+		currenciesPair.source().getCode(),
+		conversion,
+		currenciesPair.target().getCode());
+    }
+}
+
+- Rates.java:
+            
+package com.aluracursos.conversormoneda.services;
+
+import com.aluracursos.conversormoneda.models.Currencies;
+import com.aluracursos.conversormoneda.models.RatesInformation;
+import com.aluracursos.conversormoneda.utils.ApiClientException;
+
+import java.util.Date;
+import java.util.Map;
+
+public class Rates extends BaseRateService {
+    public Rates(String APIKEY) {
+        super(APIKEY);
+    }
+
+    public void showExchangeRates() {
+        userInterface.displayHeaderMessage("  Tasas  Cambiarías");
+        userInterface.displayCurrenciesCodes();
+
+        Currencies baseCurrency = inputHandler.readCurrency("Moneda base (código): ");
+
+        try {
+            RatesInformation response = fetchRatesInformation(baseCurrency.getCode());
+            showGeneralInformation(response);
+
+        } catch (ApiClientException e) {
+            handleApiException(e);
+        } catch (InterruptedException e) {
+            handleInterruptedException(e);
+        }
+    }
+
+    private void showGeneralInformation(RatesInformation response) {
+        Date lastUpdate = new Date(response.getTime_last_update_unix() * 1000);
+        System.out.println("\nUltima actualización: " + lastUpdate);
+        System.out.println("Base: (" + response.getBase_code() + ")");
+        showPreferredRates(response.getConversion_rates());
+    }
+
+    private void showPreferredRates(Map<String, Double> rates) {
+        System.out.println("\nTasas de las monedas preferidas:");
+        for (Currencies currency : Currencies.values()) {
+            if (rates.containsKey(currency.getCode())) {
+                System.out.printf("- %s (%s): %,.2f%n",
+                        currency.getName(),
+                        currency.getCode(),
+                        rates.get(currency.getCode()));
+            } else {
+                System.out.println("- (" + currency.getName() + "): No disponible en esta consulta.");
+            }
+        }
+    }
+}
+
+- ApiClient.java:
+
+package com.aluracursos.conversormoneda.utils;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+
+public class ApiClient {
+
+    private static final String API_URL_BASE = "https://v6.exchangerate-api.com/v6/";
+    private static final int CONNECT_TIMEOUT_SECONDS = 20;
+    private static final int REQUEST_TIMEOUT_MINUTES = 2;
+    private final HttpClient httpClient;
+    private final String APIKEY;
+
+    public ApiClient(String APIKEY) {
+        this.httpClient = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(CONNECT_TIMEOUT_SECONDS))
+                .build();
+        this.APIKEY = APIKEY;
+    }
+
+    public String lookupInfo(String baseCurrency) throws ApiClientException, InterruptedException {
+        String urlRequest = API_URL_BASE + APIKEY + "/latest/" + baseCurrency;
+        return queryInfo(urlRequest, baseCurrency);
+    }
+
+    public String lookupInfo(String baseCurrency, String targetCurrency) throws ApiClientException, InterruptedException {
+        String urlRequest = API_URL_BASE + APIKEY + "/pair/" + baseCurrency + "/" + targetCurrency;
+        String description = "el par " + baseCurrency + "-" + targetCurrency;
+        return queryInfo(urlRequest, description);
+    }
+
+    private String queryInfo(String urlRequest, String description) throws ApiClientException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(urlRequest))
+                .GET()
+                .timeout(Duration.ofMinutes(REQUEST_TIMEOUT_MINUTES))
+                .build();
+
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                return response.body();
+            } else {
+                throw handlingApiErrors(response);
+            }
+        } catch (IOException e) {
+            throw new ApiClientException("Error IO al consultar la información cambiaría para " + description, e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new InterruptedException("Operación interrumpida al consultar la información cambiaría para " + description);
+        }
+    }
+
+    private ApiClientException handlingApiErrors(HttpResponse<String> response) throws ApiClientException {
+        String errorBody = response.body();
+        String errorMessage = "Error al consultar la información cambiaría. Código de estado: " + response.statusCode();
+
+        try {
+            Gson gson = new Gson();
+            JsonObject errorJson = gson.fromJson(errorBody, JsonObject.class);
+            String errorType = errorJson.get("error-type").getAsString();
+
+            errorMessage += switch (errorType) {
+                case "unsupported-code" -> ". Moneda no soportada.";
+                case "malformed-request" -> ". Solicitud malformada.";
+                case "invalid-key" -> ". Clave de API inválida.";
+                case "inactive-account" -> ". Cuenta inactiva (correo no confirmado).";
+                case "quota-reached" -> ". Cuota de solicitudes alcanzada.";
+                default -> ". Error desconocido."; // Error no cubierto por la API
+            };
+
+        } catch (JsonParseException e) {
+            errorMessage += ". Error al analizar la respuesta del error: " + errorBody;
+        } catch (Exception e) {
+            errorMessage += ". Error inesperado al procesar la respuesta del error: " + errorBody;
+        }
+        throw new ApiClientException(errorMessage);
+    }
+}
+
+- ApiClientException.java:
+
+package com.aluracursos.conversormoneda.utils;
+
+public class ApiClientException extends Exception {
+    public ApiClientException(String message) {
+        super(message);
+    }
+
+    public ApiClientException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
+
+- InputHandler.java:
+
+package com.aluracursos.conversormoneda.utils;
+
+import com.aluracursos.conversormoneda.models.Currencies;
+
+import java.util.Scanner;
+
+public class InputHandler {
+    private final Scanner scanner;
+
+    public InputHandler() {
+        this.scanner = new Scanner(System.in);
+    }
+
+    public double readDecimal(String prompt) {
+        boolean isValidInput = false;
+        Double value = null;
+
+        while (!isValidInput) {
+            System.out.print(prompt);
+            String input = scanner.nextLine();
+            try {
+                value = Double.parseDouble(input);
+                if (value <= 0) {
+                    throw new NumberFormatException();
+                }
+                isValidInput = true;
+            } catch (NumberFormatException e) {
+                System.err.println("Error: Ingrese un valor numérico válido.");
+            }
+        }
+        return value;
+    }
+
+    public Currencies readCurrency(String prompt) {
+        boolean isValidInput = false;
+        Currencies currency = null;
+
+        while (!isValidInput) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().toUpperCase();
+            try {
+                currency = Currencies.valueOf(input);
+                System.out.println("Moneda seleccionada: " + currency.getName());
+                isValidInput = true;
+            } catch (IllegalArgumentException e) {
+                System.err.println("Error: Ingrese un código monetario válido.");
+            }
+        }
+        return currency;
+    }
+
+    public void closeScanner() {
+        scanner.close();
+    }
+}
+
+- MenuBuilder.java:
+
+package com.aluracursos.conversormoneda.utils;
+
+import com.aluracursos.conversormoneda.models.MenuOptions;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+public class MenuBuilder<T> {
+    private final StringBuilder menuLines = new StringBuilder();
+    private final String header;
+    private final String description;
+    private final Map<T, MenuOptions<T>> options = new LinkedHashMap<>();
+
+    public MenuBuilder(String header, String description) {
+        this.header = header;
+        this.description = description;
+    }
+
+    public void addOption(T key, String description, Runnable action) {
+        options.put(key, new MenuOptions<>(key, description, action));
+    }
+
+    public void display() {
+        menuLines.setLength(0);
+        menuLines.append("\n--------------------------\n");
+        menuLines.append(header).append("\n");
+        menuLines.append("--------------------------\n");
+        menuLines.append(description).append("\n");
+        for (MenuOptions<T> entry : options.values()) {
+            menuLines.append(entry).append("\n");
+        }
+        System.out.print(menuLines);
+    }
+
+    public Runnable getActionForOption(T key) {
+        if (options.containsKey(key)) {
+            return options.get(key).getAction();
+        }
+        return null;
+    }
+}
+
+- UserInterface.java:
+
+package com.aluracursos.conversormoneda.utils;
+
+import com.aluracursos.conversormoneda.models.Currencies;
+
+public class UserInterface {
+
+    public void displayHeaderMessage(String prompt) {
+        System.out.printf("""
+                \n-----------------------
+                 %s
+                -----------------------
+                \n""", prompt);
+    }
+
+    public void displayCurrenciesCodes() {
+        System.out.println("Info. código de monedas:");
+        for (Currencies moneda : Currencies.values()) {
+            System.out.println("- " + moneda.name() + " (" + moneda.getName() + ")");
+        }
+        System.out.println();
+    }
+}
+

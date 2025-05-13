@@ -6,7 +6,7 @@
 ## Índice <!-- omit from toc -->
 
 - [Descripción general](#descripción-general)
-- [Diagrama UML de Clase](#diagrama-uml-de-clase)
+- [Diagrama de Clases UML](#diagrama-de-clases-uml)
 - [Caracterízación](#caracterízación)
 - [Tecnologías empleadas](#tecnologías-empleadas)
 - [Instalación y ejecución](#instalación-y-ejecución)
