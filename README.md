@@ -119,8 +119,8 @@ A su vez, en el proyecto se ponen en práctica los siguientes fundamentos:
 
 ## Tecnologías empleadas
 
-- Fedora Linux 41 (Workstation Edition)
-- openjdk 17.0.15
+- Fedora Linux 42 (Workstation Edition)
+- OpenJDK 21.0.7
 - IntelliJ IDEA 2025.1.1.1 (Community Edition)
 - [ExchangeRate-API](https://www.exchangerate-api.com/)
 - [Postman](https://www.postman.com/explore)
